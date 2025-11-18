@@ -14,11 +14,14 @@ const schema = a.schema({
     .authorization((allow) => [allow.owner()]),
   Telemetry: a
     .model({
-      deviceId: a.string(),
-      temperature: a.string(),
-      humidity: a.string(),
+      device_id: a.string().required(),
+      timestamp: a.timestamp().required(),
+      temperature: a.float(),
+      humidity: a.float(),
+      owner: a.string().required()
     })
-    .authorization((allow) => [allow.owner()]),
+    .identifier(['device_id', 'timestamp'])
+    .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
