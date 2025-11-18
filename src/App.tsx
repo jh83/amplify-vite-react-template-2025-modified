@@ -9,21 +9,21 @@ function App() {
 
   const { user, signOut } = useAuthenticator();
 
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  //const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
   useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
+   // client.models.Todo.observeQuery().subscribe({
+   //   next: (data) => setTodos([...data.items]),
+   // });
   }, []);
 
   function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
+    //client.models.Todo.create({ content: window.prompt("Todo content") });
   }
 
 
   function deleteTodo(id: string) {
-    client.models.Todo.delete({ id })
+    //client.models.Todo.delete({ id })
   }
 
   return (
@@ -31,11 +31,11 @@ function App() {
       <h1>{user?.signInDetails?.loginId}'s todos</h1>
       <button onClick={createTodo}>+ new</button>
       <ul>
-        {todos.map((todo) => (
+        {/* {todos.map((todo) => (
           <li onClick={() =>
             deleteTodo(todo.id)}
             key={todo.id}>{todo.content}</li>
-        ))}
+        ))} */}
       </ul>
       <div>
 
