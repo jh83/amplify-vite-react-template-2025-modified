@@ -16,7 +16,6 @@ import {
 
 const client = generateClient<Schema>();
 
-
 function App() {
 
   const { user, signOut } = useAuthenticator();
