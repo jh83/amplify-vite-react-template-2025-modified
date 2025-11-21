@@ -2,6 +2,7 @@ import type { Handler } from 'aws-lambda';
 
 const GRAPHQL_ENDPOINT = process.env.API_ENDPOINT as string;
 const GRAPHQL_API_KEY = process.env.API_KEY as string;
+const AMPLIFY_SSM_ENV_CONFIG = process.env.AMPLIFY_SSM_ENV_CONFIG as string;
 
 /**
  * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
@@ -10,6 +11,8 @@ export const handler: Handler = async (event, context) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     console.log(`GRAPHQL_ENDPOINT: ${GRAPHQL_ENDPOINT}`);
     console.log(`GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}`);
+    console.log(`AMPLIFY_SSM_ENV_CONFIG: ${process.env.AMPLIFY_SSM_ENV_CONFIG}`);
+
 
     let statusCode = 200;
     let response;
