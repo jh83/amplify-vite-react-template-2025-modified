@@ -11,6 +11,52 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
+  Todo: a
+  .model({
+    content: a.string(),
+  })
+  .authorization((allow) => [allow.owner()]),
+
+  Devices: a
+    .model({
+      device_id: a.string().required(),
+      owner: a.string().required(),
+      status: a.string(),
+    })
+    .identifier(['device_id'])
+    .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   Telemetry: a
     .model({
       device_id: a.string().required(),
@@ -21,6 +67,7 @@ const schema = a.schema({
     })
     .identifier(['device_id', 'timestamp'])
     .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
+
 
   AddTelemetry: a
     .mutation()
@@ -35,16 +82,9 @@ const schema = a.schema({
     .returns(a.ref("Telemetry"))
     .authorization((allow) => [allow.publicApiKey()])
     .handler(a.handler.function(iotCoreHandler)),
-
-  Devices: a
-    .model({
-      device_id: a.string().required(),
-      owner: a.string().required(),
-      status: a.string(),
-    })
-    .identifier(['device_id'])
-    .authorization((allow) => [allow.owner(), allow.publicApiKey()])
 });
+
+
 
 export type Schema = ClientSchema<typeof schema>;
 
