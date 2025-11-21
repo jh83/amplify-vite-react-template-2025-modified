@@ -11,7 +11,7 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  telemetry: a
+  Telemetry: a
     .model({
       device_id: a.string().required(),
       timestamp: a.timestamp().required(),
@@ -32,10 +32,9 @@ const schema = a.schema({
       owner: a.string().required()
     }
     )
-    .returns(a.ref("telemetry"))
+    .returns(a.ref("Telemetry"))
     .authorization((allow) => [allow.publicApiKey()])
     .handler(a.handler.function(iotCoreHandler)),
-
 
   Devices: a
     .model({

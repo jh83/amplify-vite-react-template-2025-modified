@@ -8,6 +8,8 @@ const GRAPHQL_API_KEY = process.env.API_KEY as string;
  */
 export const handler: Handler = async (event, context) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
+    console.log(`GRAPHQL_ENDPOINT: ${GRAPHQL_ENDPOINT}`);
+    console.log(`GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}`);
 
     let statusCode = 200;
     let response;
@@ -55,6 +57,7 @@ export const handler: Handler = async (event, context) => {
         };
     }
 
+    // if the device exists and a owner is found, add the telemetry
     if (responseBody.data.getDevices?.owner) {
         // Mutate
         request = new Request(GRAPHQL_ENDPOINT, {
