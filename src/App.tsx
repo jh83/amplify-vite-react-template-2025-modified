@@ -10,7 +10,8 @@ import {
   Divider,
   Flex,
   useAuthenticator,
-  View
+  View,
+  SelectField,
 } from '@aws-amplify/ui-react';
 
 const client = generateClient<Schema>();
@@ -19,7 +20,10 @@ function App() {
 
   const { user, signOut } = useAuthenticator();
 
+  const [selectedOption, setSelectedOption] = useState<string>("");
+
   const [devices, setDevices] = useState<Array<Schema["Devices"]["type"]>>([]);
+
   useEffect(() => {
     client.models.Devices.observeQuery().subscribe({
       next: (data) => { setDevices([...data.items]) },
@@ -34,6 +38,8 @@ function App() {
   function deleteDevice(device_id: string) {
     client.models.Devices.delete({ device_id })
   }
+
+  
 
 
   return (
@@ -69,10 +75,6 @@ function App() {
           >
 
             <View padding="xs">
-              <Flex>
-                {/* Last Seen: {telemetries[telemetries.length - 1]?.timestamp ? moment(telemetries[telemetries.length - 1].timestamp).fromNow() : ""} */}
-
-              </Flex>
 
               <br />
               <Flex>
@@ -91,7 +93,27 @@ function App() {
           </Card>
         )}
       </Collection>
+
+      <Divider padding="xs" />
+      <SelectField
+        label="Telemetry"
+        descriptiveText="Select a device"
+        value={selectedOption}
+        onChange={(e) => { console.log(e.target.value); setSelectedOption(e.target.value) }}
+      >
+        <option value="all">All</option>
+        {devices.map((device) => (
+          <option key={device.device_id} value={device.device_id}>{device.device_id}</option>
+        ))}
+      </SelectField>
+
       <View padding="xs"></View>
+
+      <Flex>
+        {/* Last Seen: {telemetries[telemetries.length - 1]?.timestamp ? moment(telemetries[telemetries.length - 1].timestamp).fromNow() : ""} */}
+      </Flex>
+
+
       <button onClick={signOut}>Sign out</button>
     </main>
   );
