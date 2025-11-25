@@ -12,10 +12,10 @@ specifies that any user authenticated via an API key can "create", "read",
 =========================================================================*/
 const schema = a.schema({
   Todo: a
-  .model({
-    content: a.string(),
-  })
-  .authorization((allow) => [allow.owner()]),
+    .model({
+      content: a.string(),
+    })
+    .authorization((allow) => [allow.owner()]),
 
   Devices: a
     .model({
@@ -28,21 +28,14 @@ const schema = a.schema({
     .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  UpdateDeviceName: a
+    .mutation()
+    .arguments({
+      device_id: a.string().required(),
+      display_name: a.string().required(),
+    })
+    .returns(a.ref("Devices"))
+    .authorization((allow) => [allow.publicApiKey()]),
 
 
 
