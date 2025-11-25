@@ -26,10 +26,6 @@ const schema = a.schema({
     .identifier(['device_id'])
     .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
 
-
-
-
-
   Telemetry: a
     .model({
       device_id: a.string().required(),

@@ -76,10 +76,6 @@ function App() {
 
               </Flex>
 
-              <Flex direction="row">
-                <Text>Name:</Text>
-                <Heading>{item.display_name}</Heading>
-              </Flex>
               <br />
               <Flex>
                 Status:
