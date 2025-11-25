@@ -11,11 +11,11 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
-    .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.owner()]),
+ // Todo: a
+  //  .model({
+  //    content: a.string(),
+  //  })
+  //  .authorization((allow) => [allow.owner()]),
 
   Devices: a
     .model({
@@ -28,18 +28,7 @@ const schema = a.schema({
     .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+    
 
 
   Telemetry: a
@@ -52,6 +41,19 @@ const schema = a.schema({
     })
     .identifier(['device_id', 'timestamp'])
     .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   AddTelemetry: a
