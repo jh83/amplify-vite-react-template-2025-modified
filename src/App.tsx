@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 
+import moment from "moment";
+import { Line } from 'react-chartjs-2';
+
 import {
   Badge,
   Button,
@@ -14,6 +17,28 @@ import {
   SelectField,
 } from '@aws-amplify/ui-react';
 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 const client = generateClient<Schema>();
 
 function App() {
@@ -23,12 +48,37 @@ function App() {
   const [selectedOption, setSelectedOption] = useState<string>("");
 
   const [devices, setDevices] = useState<Array<Schema["Devices"]["type"]>>([]);
+  const [telemetries, setTelemetry] = useState<Array<Schema["Telemetry"]["type"]>>([]);
+  const [_currentTime, setCurrentTime] = useState(Date.now());
+
+  useEffect(() => {
+    const filter = selectedOption && selectedOption !== "all"
+      ? { filter: { device_id: { eq: selectedOption } } }
+      : {};
+
+    client.models.Telemetry.observeQuery(filter).subscribe({
+      next: (data) => { setTelemetry([...data.items]) },
+    });
+  }, [selectedOption]); // Re-run when selectedOption changes
 
   useEffect(() => {
     client.models.Devices.observeQuery().subscribe({
       next: (data) => { setDevices([...data.items]) },
     });
   }, []);
+
+  // Update current time every 30 seconds to refresh "Last Seen" timestamps
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 30000); // Update every 30 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  function deleteTelemetry(device_id: string, timestamp: number) {
+    client.models.Telemetry.delete({ device_id, timestamp })
+  }
 
   function createDevice() {
     const device = String(window.prompt("Device ID"));
@@ -39,7 +89,80 @@ function App() {
     client.models.Devices.delete({ device_id })
   }
 
-  
+  const chartOptions = {
+
+    onClick: function (evt: any, element: string | any[]) {
+      evt;
+      if (element.length > 0) {
+        var ind = element[0].index;
+        deleteTelemetry(telemetries[ind].device_id, telemetries[ind].timestamp)
+      }
+    },
+
+    responsive: true,
+    interaction: {
+      mode: 'index' as const,
+      intersect: false,
+    },
+    stacked: false,
+    plugins: {
+      title: {
+        display: true,
+        text: telemetries[0]?.device_id ? telemetries[0].device_id : "",
+      },
+    },
+    scales: {
+      y: {
+        type: 'linear' as const,
+        display: true,
+        position: 'left' as const,
+        ticks: {
+          callback: function (value: any) {
+            return value + ' °C';
+          }
+        }
+      },
+      y1: {
+        type: 'linear' as const,
+        display: true,
+        position: 'right' as const,
+        ticks: {
+          callback: function (value: any) {
+            return value + ' %';
+          }
+        }
+      }
+    },
+  };
+
+
+  const cartData = {
+    labels: telemetries.map((data) => {
+      return moment(data?.timestamp).format("HH:mm:ss");
+    }),
+    datasets: [
+      {
+        label: 'Temperature',
+        data: telemetries.map((data) => {
+          return data?.temperature;
+        }),
+        tension: 0.4,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        yAxisID: 'y',
+      },
+      {
+        label: 'Humidity',
+        data: telemetries.map((data) => {
+          return data?.humidity;
+        }),
+        tension: 0.4,
+        borderColor: 'rgb(99, 255, 132)',
+        backgroundColor: 'rgba(99, 255, 132, 0.5)',
+        yAxisID: 'y1',
+      }
+    ],
+  };
 
 
   return (
@@ -83,6 +206,9 @@ function App() {
                   {item?.status ? item?.status.charAt(0).toUpperCase() + String(item?.status).slice(1) : ""}
                 </Badge>
               </Flex>
+              <Flex>
+                Last Seen: {telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => b.timestamp - a.timestamp)[0]?.timestamp ? moment(telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => b.timestamp - a.timestamp)[0].timestamp).fromNow() : "Never"}
+              </Flex>
               <br />
               <Flex>ID: {item.device_id}</Flex>
               <br />
@@ -99,7 +225,7 @@ function App() {
         label="Telemetry"
         descriptiveText="Select a device"
         value={selectedOption}
-        onChange={(e) => { console.log(e.target.value); setSelectedOption(e.target.value) }}
+        onChange={(e) => { setSelectedOption(e.target.value) }}
       >
         <option value="all">All</option>
         {devices.map((device) => (
@@ -109,10 +235,9 @@ function App() {
 
       <View padding="xs"></View>
 
-      <Flex>
-        {/* Last Seen: {telemetries[telemetries.length - 1]?.timestamp ? moment(telemetries[telemetries.length - 1].timestamp).fromNow() : ""} */}
-      </Flex>
+      <Line options={chartOptions} data={cartData}></Line>
 
+      <Divider padding="xs" />
 
       <button onClick={signOut}>Sign out</button>
     </main>
