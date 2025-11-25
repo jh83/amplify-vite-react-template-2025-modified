@@ -43,11 +43,11 @@ export const handler: Handler = async (event, context) => {
     });
 
     try {
-        console.log("request: ", request)
+        console.log("UpdateDevices request: ", request)
         response = await fetch(request);
-        console.log("response: ", response)
+        console.log("UpdateDevices response: ", response)
         responseBody = await response.json();
-        console.log("Response Body: ", responseBody)
+        console.log("UpdateDevices Response Body: ", responseBody)
         if (responseBody.errors) statusCode = 400;
     } catch (error) {
         statusCode = 400;

@@ -40,13 +40,13 @@ export const handler: Handler = async (event, context) => {
                 `})
     });
 
-    console.log("request:", request)
+    console.log("GetDevice request:", request)
 
     try {
         response = await fetch(request);
         responseBody = await response.json();
 
-        console.log("responseBody:", responseBody)
+        console.log("GetDevice responseBody:", responseBody)
         if (responseBody.errors) statusCode = 400;
     } catch (error) {
         statusCode = 400;
@@ -89,11 +89,11 @@ export const handler: Handler = async (event, context) => {
         });
 
         try {
-            console.log("request: ", request)
+            console.log("CreateTelemetry request: ", request)
             response = await fetch(request);
-            console.log("response: ", response)
+            console.log("CreateTelemetry response: ", response)
             responseBody = await response.json();
-            console.log("Response Body: ", responseBody)
+            console.log("CreateTelemetry Response Body: ", responseBody)
             if (responseBody.errors) statusCode = 400;
         } catch (error) {
             statusCode = 400;
