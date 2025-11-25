@@ -22,6 +22,7 @@ const schema = a.schema({
       device_id: a.string().required(),
       owner: a.string().required(),
       status: a.string(),
+      display_name: a.string(),
     })
     .identifier(['device_id'])
     .authorization((allow) => [allow.owner(), allow.publicApiKey()]),

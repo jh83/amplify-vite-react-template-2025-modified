@@ -29,30 +29,14 @@ function App() {
 
   function createDevice() {
     const device = String(window.prompt("Device ID"));
-    client.models.Devices.create({ device_id: device, owner: user.userId })
+    const display_name = String(window.prompt("Display Name"));
+    client.models.Devices.create({ device_id: device, owner: user.userId, display_name: display_name })
   }
 
   function deleteDevice(device_id: string) {
     client.models.Devices.delete({ device_id })
   }
 
-
-  //const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-
-  //useEffect(() => {
-  // client.models.Todo.observeQuery().subscribe({
-  //   next: (data) => setTodos([...data.items]),
-  // });
-  //}, []);
-
-  // function createTodo() {
-  //client.models.Todo.create({ content: window.prompt("Todo content") });
-  //}
-
-
-  //function deleteTodo(id: string) {
-  //client.models.Todo.delete({ id })
-  // }
 
   return (
     <main>
@@ -68,6 +52,7 @@ function App() {
           Add Device
         </Button>
       }
+
       <Divider padding="xs" />
 
       <Collection
