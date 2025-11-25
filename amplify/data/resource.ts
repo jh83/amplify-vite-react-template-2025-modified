@@ -1,7 +1,7 @@
 import { type ClientSchema, a, defineData, defineFunction } from "@aws-amplify/backend";
 
 const iotCoreHandler = defineFunction({
-  entry: './iot-core-handler/handler.ts'
+  entry: './iot-core-handler/handler.ts',
 })
 
 /*== STEP 1 ===============================================================
@@ -11,11 +11,6 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  // Todo: a
-  //  .model({
-  //    content: a.string(),
-  //  })
-  //  .authorization((allow) => [allow.owner()]),
 
   Devices: a
     .model({
