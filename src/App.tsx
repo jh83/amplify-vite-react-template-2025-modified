@@ -12,15 +12,8 @@ import {
   Heading,
   useAuthenticator,
   View,
-  Icon,
   Text
 } from '@aws-amplify/ui-react';
-
-import { CiSettings } from 'react-icons/ci';
-
-export const CustomIconWithLibExample = () => {
-  return <Icon ariaLabel="Javascript" as={CiSettings} />;
-};
 
 const client = generateClient<Schema>();
 
@@ -37,16 +30,11 @@ function App() {
 
   function createDevice() {
     const device = String(window.prompt("Device ID"));
-    const display_name = String(window.prompt("Display Name"));
-    client.models.Devices.create({ device_id: device, owner: user.userId, display_name: display_name })
+    client.models.Devices.create({ device_id: device, owner: user.userId })
   }
 
   function deleteDevice(device_id: string) {
     client.models.Devices.delete({ device_id })
-  }
-
-  function updateDevice(device_id: string, display_name: string) {
-    client.models.Devices.update({ device_id, display_name })
   }
 
 
@@ -91,11 +79,6 @@ function App() {
               <Flex direction="row">
                 <Text>Name:</Text>
                 <Heading>{item.display_name}</Heading>
-                <Icon
-                  ariaLabel="Settings"
-                  as={CiSettings}
-                  onClick={() => updateDevice(item.device_id, String(window.prompt("Display Name")))}
-                />
               </Flex>
               <br />
               <Flex>
