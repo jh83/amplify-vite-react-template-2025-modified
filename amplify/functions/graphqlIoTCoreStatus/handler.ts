@@ -23,7 +23,7 @@ export const handler: Handler = async (event, context) => {
 
     // Mutate
     request = new Request(GRAPHQL_ENDPOINT, {
-        method: 'POST',
+        //method: 'PUT',
         headers: headers,
         body: JSON.stringify({
             query: `mutation MyMutation {
