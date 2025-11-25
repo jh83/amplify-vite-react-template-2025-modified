@@ -37,21 +37,7 @@ const schema = a.schema({
     .identifier(['device_id', 'timestamp'])
     .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  AddTelemetry: a
+    AddTelemetry: a
     .mutation()
     .arguments({
       device_id: a.string().required(),
