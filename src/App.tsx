@@ -9,10 +9,8 @@ import {
   Collection,
   Divider,
   Flex,
-  Heading,
   useAuthenticator,
-  View,
-  Text
+  View
 } from '@aws-amplify/ui-react';
 
 const client = generateClient<Schema>();
