@@ -76,8 +76,10 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  function deleteTelemetry(device_id: string, timestamp: string) {
-    client.models.Telemetry.delete({ device_id, timestamp })
+  //function deleteTelemetry(device_id: string, timestamp: string) {
+  function deleteTelemetry(device_id: string) {
+    // client.models.Telemetry.delete({ device_id, timestamp })
+    client.models.Telemetry.delete({ device_id })
   }
 
   function createDevice() {
@@ -94,8 +96,8 @@ function App() {
     onClick: function (evt: any, element: string | any[]) {
       evt;
       if (element.length > 0) {
-        var ind = element[0].index;
-        deleteTelemetry(telemetries[ind].device_id,  telemetries[ind].timestamp.toString())
+        //var ind = element[0].index;
+        //deleteTelemetry(telemetries[ind].device_id, telemetries[ind].timestamp.toString())
       }
     },
 
