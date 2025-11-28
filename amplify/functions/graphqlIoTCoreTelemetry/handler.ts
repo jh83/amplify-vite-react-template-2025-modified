@@ -14,6 +14,9 @@ export const handler: Handler = async (event, context) => {
     console.log(`AMPLIFY_SSM_ENV_CONFIG: ${AMPLIFY_SSM_ENV_CONFIG}`);
 
 
+    event.timestamp = event.timestamp.toString();
+    console.log(`EVENT with timestamp as string: ${JSON.stringify(event)}`);
+
     let statusCode = 200;
     let response;
     let responseBody;
