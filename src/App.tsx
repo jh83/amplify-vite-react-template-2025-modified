@@ -57,7 +57,7 @@ function App() {
       : {};
 
     client.models.Telemetry.observeQuery(filter).subscribe({
-      next: (data) => { setTelemetry([...data.items]), console.log(data.items) },
+      next: (data) => { setTelemetry([...data.items]) },
     });
   }, [selectedOption]); // Re-run when selectedOption changes
 
@@ -77,9 +77,7 @@ function App() {
   }, []);
 
   function deleteTelemetry(device_id: string, timestamp: string) {
-    //function deleteTelemetry(device_id: string) {
     client.models.Telemetry.delete({ device_id, timestamp })
-    //  client.models.Telemetry.delete({ device_id })
   }
 
   function createDevice() {
@@ -140,7 +138,7 @@ function App() {
 
   const cartData = {
     labels: telemetries.map((data) => {
-      return moment(data?.timestamp).format("HH:mm:ss");
+      return moment(parseInt(data?.timestamp)).format("YYYY-MM-DD HH:mm:ss");
     }),
     datasets: [
       {
@@ -209,7 +207,7 @@ function App() {
                 </Badge>
               </Flex>
               <Flex>
-                {/* Last Seen: {telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => b.timestamp - a.timestamp)[0]?.timestamp ? moment(telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => b.timestamp - a.timestamp)[0].timestamp).fromNow() : "Never"} */}
+                Last Seen: {telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp))[0]?.timestamp ? moment(parseInt(String(telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp))[0].timestamp))).fromNow() : "Never"}
               </Flex>
               <br />
               <Flex>ID: {item.device_id}</Flex>
