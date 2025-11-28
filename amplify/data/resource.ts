@@ -24,7 +24,8 @@ const schema = a.schema({
   Telemetry: a
     .model({
       device_id: a.string().required(),
-      timestamp: a.timestamp().required(),
+      //timestamp: a.timestamp().required(),
+      timestamp: a.string().required(),
       temperature: a.float(),
       humidity: a.float(),
       owner: a.string().required()
@@ -36,7 +37,8 @@ const schema = a.schema({
     .mutation()
     .arguments({
       device_id: a.string().required(),
-      timestamp: a.timestamp().required(),
+      //timestamp: a.timestamp().required(), 
+      timestamp: a.string().required(),
       temperature: a.float(),
       humidity: a.float(),
       owner: a.string().required()

@@ -57,7 +57,7 @@ function App() {
       : {};
 
     client.models.Telemetry.observeQuery(filter).subscribe({
-      next: (data) => { setTelemetry([...data.items]) },
+      next: (data) => { setTelemetry([...data.items]), console.log(data.items) },
     });
   }, [selectedOption]); // Re-run when selectedOption changes
 
@@ -76,7 +76,7 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  function deleteTelemetry(device_id: string, timestamp: number) {
+  function deleteTelemetry(device_id: string, timestamp: string) {
     client.models.Telemetry.delete({ device_id, timestamp })
   }
 
@@ -95,7 +95,7 @@ function App() {
       evt;
       if (element.length > 0) {
         var ind = element[0].index;
-        deleteTelemetry(telemetries[ind].device_id, telemetries[ind].timestamp)
+        deleteTelemetry(telemetries[ind].device_id,  telemetries[ind].timestamp.toString())
       }
     },
 
@@ -207,7 +207,7 @@ function App() {
                 </Badge>
               </Flex>
               <Flex>
-                Last Seen: {telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => b.timestamp - a.timestamp)[0]?.timestamp ? moment(telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => b.timestamp - a.timestamp)[0].timestamp).fromNow() : "Never"}
+                {/* Last Seen: {telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => b.timestamp - a.timestamp)[0]?.timestamp ? moment(telemetries.filter(t => t.device_id === item.device_id).sort((a, b) => b.timestamp - a.timestamp)[0].timestamp).fromNow() : "Never"} */}
               </Flex>
               <br />
               <Flex>ID: {item.device_id}</Flex>
