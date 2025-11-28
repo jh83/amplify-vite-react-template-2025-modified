@@ -77,10 +77,10 @@ function App() {
   }, []);
 
   //function deleteTelemetry(device_id: string, timestamp: string) {
-  function deleteTelemetry(device_id: string) {
+  //function deleteTelemetry(device_id: string) {
     // client.models.Telemetry.delete({ device_id, timestamp })
-    client.models.Telemetry.delete({ device_id })
-  }
+  //  client.models.Telemetry.delete({ device_id })
+  //}
 
   function createDevice() {
     const device = String(window.prompt("Device ID"));
