@@ -30,8 +30,8 @@ const schema = a.schema({
       humidity: a.float(),
       owner: a.string().required()
     })
-    //.identifier(['device_id', 'timestamp'])
-    .identifier(['device_id'])
+    .identifier(['device_id', 'timestamp'])
+    //.identifier(['device_id'])
     .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
 
   AddTelemetry: a
