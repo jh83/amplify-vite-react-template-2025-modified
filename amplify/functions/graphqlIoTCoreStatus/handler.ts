@@ -11,15 +11,19 @@ Amplify.configure(resourceConfig, libraryOptions);
 const client = generateClient<Schema>({ authMode: 'iam' });
 
 export const handler: Handler = async (event) => {
+
+  // Update device status in GraphQL API / Devices table
   const { data, errors } = await client.models.Devices.update({
     device_id: event.device_id,
     status: event.eventType,
   });
 
+  // If error updating device, return error
   if (errors) {
     console.log('UpdateDevices errors:', errors);
     return { statusCode: 400, body: JSON.stringify({ errors }) };
   }
 
+  // If device updated successfully, return device
   return { statusCode: 200, body: JSON.stringify(data) };
 };
