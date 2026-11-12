@@ -1,6 +1,6 @@
 import { type ClientSchema, a, defineData, defineFunction } from "@aws-amplify/backend";
 import { graphqlIoTCoreTelemetry } from '../functions/graphqlIoTCoreTelemetry/resource';
-
+import { graphqlIoTCoreStatus } from '../functions/graphqlIoTCoreStatus/resource';
 
 const iotCoreHandler = defineFunction({
   entry: './iot-core-handler/handler.ts'
@@ -58,6 +58,7 @@ const schema = a.schema({
     .handler(a.handler.function(iotCoreHandler)),
 }).authorization((allow) => [
   allow.resource(graphqlIoTCoreTelemetry).to(['query', 'mutate']),
+  allow.resource(graphqlIoTCoreStatus).to(['mutate']),
 ]);
 
 
