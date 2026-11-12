@@ -81,8 +81,9 @@ function App() {
   }
 
   function createDevice() {
-    const device = String(window.prompt("Device ID"));
-    client.models.Devices.create({ device_id: device, owner: user.userId })
+    const device = window.prompt("Device ID");
+    if (!device) return;
+    client.models.Devices.create({ device_id: device, owner: user.userId });
   }
 
   function deleteDevice(device_id: string) {
