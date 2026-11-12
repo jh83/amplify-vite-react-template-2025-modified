@@ -1,70 +1,25 @@
 import type { Handler } from 'aws-lambda';
+import { Amplify } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/data';
+import { getAmplifyDataClientConfig } from '@aws-amplify/backend/function/runtime';
+import { env } from '$amplify/env/graphqlIoTCoreStatus';
+import type { Schema } from '../../data/resource';
 
-const GRAPHQL_ENDPOINT = process.env.API_ENDPOINT as string;
-const GRAPHQL_API_KEY = process.env.API_KEY as string;
+const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(env);
+Amplify.configure(resourceConfig, libraryOptions);
 
-/**
- * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
- */
-export const handler: Handler = async (event, context) => {
-    console.log(`EVENT: ${JSON.stringify(event)}`);
+const client = generateClient<Schema>({ authMode: 'iam' });
 
-    let statusCode = 200;
-    let response;
-    let responseBody;
-    let request;
+export const handler: Handler = async (event) => {
+  const { data, errors } = await client.models.Devices.update({
+    device_id: event.device_id,
+    status: event.eventType,
+  });
 
-    const headers = {
-        'x-api-key': GRAPHQL_API_KEY,
-        'Content-Type': 'application/json'
-    }
+  if (errors) {
+    console.log('UpdateDevices errors:', errors);
+    return { statusCode: 400, body: JSON.stringify({ errors }) };
+  }
 
-    /** @type {import('node-fetch').RequestInit} */
-
-    // Mutate
-    request = new Request(GRAPHQL_ENDPOINT, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-            query: `mutation MyMutation {
-                    updateDevices(input: {
-                        device_id: "${event.device_id}", 
-                        status: "${event.eventType}"
-                        }) 
-                    {
-                        device_id
-                        status
-                        owner
-                        createdAt
-                        updatedAt
-                    }
-                }
-                `})
-    });
-
-    try {
-        console.log("UpdateDevices request: ", request)
-        response = await fetch(request);
-        console.log("UpdateDevices response: ", response)
-        responseBody = await response.json();
-        console.log("UpdateDevices Response Body: ", responseBody)
-        if (responseBody.errors) statusCode = 400;
-    } catch (error) {
-        statusCode = 400;
-        responseBody = {
-            errors: [
-                {
-                    status: response?.status,
-                    error: JSON.stringify(error),
-                }
-            ]
-        };
-    }
-
-
-    return {
-        statusCode,
-        body: JSON.stringify(responseBody)
-    };
-
+  return { statusCode: 200, body: JSON.stringify(data) };
 };
