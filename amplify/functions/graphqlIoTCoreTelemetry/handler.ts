@@ -1,119 +1,37 @@
 import type { Handler } from 'aws-lambda';
+import { Amplify } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/data';
+import { getAmplifyDataClientConfig } from '@aws-amplify/backend/function/runtime';
+import { env } from '$amplify/env/graphqlIoTCoreTelemetry';
+import type { Schema } from '../../data/resource';
 
-const GRAPHQL_ENDPOINT = process.env.API_ENDPOINT as string;
-const GRAPHQL_API_KEY = process.env.API_KEY as string;
-const AMPLIFY_SSM_ENV_CONFIG = process.env.AMPLIFY_SSM_ENV_CONFIG as string;
+const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(env);
+Amplify.configure(resourceConfig, libraryOptions);
 
-/**
- * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
- */
-export const handler: Handler = async (event, context) => {
-    console.log(`EVENT: ${JSON.stringify(event)}`);
-    console.log(`GRAPHQL_ENDPOINT: ${GRAPHQL_ENDPOINT}`);
-    console.log(`GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}`);
-    console.log(`AMPLIFY_SSM_ENV_CONFIG: ${AMPLIFY_SSM_ENV_CONFIG}`);
+const client = generateClient<Schema>({ authMode: 'iam' });
 
-
-    event.timestamp = event.timestamp.toString();
-    console.log(`EVENT with timestamp as string: ${JSON.stringify(event)}`);
-
-    let statusCode = 200;
-    let response;
-    let responseBody;
-    let request;
-
-    const headers = {
-        'x-api-key': GRAPHQL_API_KEY,
-        'Content-Type': 'application/json'
-    }
-
-    /** @type {import('node-fetch').RequestInit} */
-
-    // Get owner from deviceID
-    request = new Request(GRAPHQL_ENDPOINT, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-            query: `query MyQuery {
-                        getDevices(device_id: "${event.device_id}") {
-                            device_id
-                            owner
-                        }
-                        }
-                `})
+export const handler: Handler = async (event) => {
+    const { data: device, errors: getErrors } = await client.models.Devices.get({
+        device_id: event.device_id,
     });
 
-    console.log("GetDevice request:", request)
-
-    try {
-        response = await fetch(request);
-        responseBody = await response.json();
-
-        console.log("GetDevice responseBody:", responseBody)
-        if (responseBody.errors) statusCode = 400;
-    } catch (error) {
-        statusCode = 400;
-        responseBody = {
-            errors: [
-                {
-                    status: response?.status,
-                    error: JSON.stringify(error),
-                }
-            ]
-        };
+    if (getErrors || !device?.owner) {
+        console.log('GetDevice errors:', getErrors);
+        return { statusCode: 400, body: JSON.stringify({ errors: getErrors, device }) };
     }
 
-    // if the device exists and a owner is found, add the telemetry
-    if (responseBody.data.getDevices?.owner) {
-        // Mutate
-        request = new Request(GRAPHQL_ENDPOINT, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({
-                query: `mutation MyMutation {
-                    createTelemetry(input: {
-                        device_id: "${event.device_id}", 
-                        temperature: ${event.temperature}, 
-                        owner: "${responseBody.data.getDevices.owner}", 
-                        humidity: ${event.humidity}, 
-                        timestamp: "${event.timestamp}"
-                        }) 
-                    {
-                        temperature
-                        humidity
-                        owner
-                        createdAt
-                        updatedAt
-                        device_id
-                        timestamp
-                    }
-                }
-                `})
-        });
+    const { data: telemetry, errors: createErrors } = await client.models.Telemetry.create({
+        device_id: event.device_id,
+        timestamp: String(event.timestamp),
+        temperature: event.temperature,
+        humidity: event.humidity,
+        owner: device.owner,
+    });
 
-        try {
-            console.log("CreateTelemetry request: ", request)
-            response = await fetch(request);
-            console.log("CreateTelemetry response: ", response)
-            responseBody = await response.json();
-            console.log("CreateTelemetry Response Body: ", responseBody)
-            if (responseBody.errors) statusCode = 400;
-        } catch (error) {
-            statusCode = 400;
-            responseBody = {
-                errors: [
-                    {
-                        status: response?.status,
-                        error: JSON.stringify(error),
-                    }
-                ]
-            };
-        }
+    if (createErrors) {
+        console.log('CreateTelemetry errors:', createErrors);
+        return { statusCode: 400, body: JSON.stringify({ errors: createErrors }) };
     }
 
-    return {
-        statusCode,
-        body: JSON.stringify(responseBody)
-    };
-
+    return { statusCode: 200, body: JSON.stringify(telemetry) };
 };
