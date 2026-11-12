@@ -12,11 +12,16 @@ const client = generateClient<Schema>({ authMode: 'iam' });
 
 export const handler: Handler = async (event) => {
 
+  console.log('Event:', event);
+
   // Update device status in GraphQL API / Devices table
   const { data, errors } = await client.models.Devices.update({
     device_id: event.device_id,
     status: event.eventType,
   });
+
+  console.log('Data:', data);
+  console.log('Errors:', errors);
 
   // If error updating device, return error
   if (errors) {
