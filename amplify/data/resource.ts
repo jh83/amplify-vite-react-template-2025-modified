@@ -1,4 +1,6 @@
 import { type ClientSchema, a, defineData, defineFunction } from "@aws-amplify/backend";
+//import { graphqlIoTCoreTelemetry } from '../functions/graphqlIoTCoreTelemetry/resource';
+
 
 const iotCoreHandler = defineFunction({
   entry: './iot-core-handler/handler.ts'
@@ -19,7 +21,10 @@ const schema = a.schema({
       status: a.string()
     })
     .identifier(['device_id'])
-    .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
+    .authorization((allow) => [
+      allow.owner(),
+      allow.publicApiKey(),
+    ]),
 
   Telemetry: a
     .model({
@@ -32,7 +37,10 @@ const schema = a.schema({
     })
     .identifier(['device_id', 'timestamp'])
     //.identifier(['device_id'])
-    .authorization((allow) => [allow.owner(), allow.publicApiKey()]),
+    .authorization((allow) => [
+      allow.owner(),
+      allow.publicApiKey()
+    ]),
 
   AddTelemetry: a
     .mutation()
