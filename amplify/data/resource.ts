@@ -56,9 +56,7 @@ const schema = a.schema({
     .returns(a.ref("Telemetry"))
     .authorization((allow) => [allow.publicApiKey()])
     .handler(a.handler.function(iotCoreHandler)),
-}).authorization((allow) => [
-  allow.resource(graphqlIoTCoreTelemetry).to(['query', 'mutate']),
-]);
+});
 
 
 
