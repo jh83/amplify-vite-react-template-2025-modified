@@ -1,5 +1,5 @@
 import { type ClientSchema, a, defineData, defineFunction } from "@aws-amplify/backend";
-import { graphqlIoTCoreTelemetry } from '../functions/graphqlIoTCoreTelemetry/resource';
+//import { graphqlIoTCoreTelemetry } from '../functions/graphqlIoTCoreTelemetry/resource';
 
 
 const iotCoreHandler = defineFunction({
