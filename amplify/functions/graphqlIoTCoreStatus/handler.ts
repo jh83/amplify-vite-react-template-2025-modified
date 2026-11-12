@@ -16,7 +16,7 @@ export const handler: Handler = async (event) => {
 
   // Update device status in GraphQL API / Devices table
   const { data, errors } = await client.models.Devices.update({
-    device_id: event.device_id,
+    device_id: event.clientId,
     status: event.eventType,
   });
 
