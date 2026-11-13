@@ -47,7 +47,7 @@ export const handler: Handler = async (event) => {
                 {
                     title: 'Temperature: ' + event.temperature + '°C',
                     description: `at <t:${Math.floor(event.timestamp / 1000)}:F>`,
-                    color: 45973,
+                    color: "#347bd8",
                 },
             ],
         };
