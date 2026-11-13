@@ -19,7 +19,8 @@ const schema = a.schema({
       device_type: a.string().required(),
       status: a.string(),
       webhook_url: a.string(),
-      webhook_enabled: a.boolean()
+      webhook_telemetry_enabled: a.boolean(),
+      webhook_status_enabled: a.boolean()
     })
     .identifier(['device_id'])
     .authorization((allow) => [
@@ -30,7 +31,6 @@ const schema = a.schema({
   Telemetry: a
     .model({
       device_id: a.string().required(),
-      //timestamp: a.timestamp().required(),
       timestamp: a.string().required(),
       temperature: a.float(),
       humidity: a.float(),

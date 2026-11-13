@@ -39,7 +39,7 @@ export const handler: Handler = async (event) => {
     }
 
     // If webhook is enabled and webhook URL is set
-    if (device.webhook_enabled === true && device.webhook_url) {
+    if (device.webhook_telemetry_enabled === true && device.webhook_url) {
         console.log('Sending webhook to:', device.webhook_url);
         const msgBody = {
             content: event.eventType,

@@ -244,12 +244,22 @@ function App() {
                 }
               />
               <SwitchField
-                label="Webhook enabled"
-                isChecked={item.webhook_enabled === true}
+                label="Webhook telemetry enabled"
+                isChecked={item.webhook_telemetry_enabled === true}
                 onChange={(e) =>
                   client.models.Devices.update({
                     device_id: item.device_id,
-                    webhook_enabled: e.target.checked,
+                    webhook_telemetry_enabled: e.target.checked,
+                  })
+                }
+              />
+              <SwitchField
+                label="Webhook status enabled"
+                isChecked={item.webhook_status_enabled === true}
+                onChange={(e) =>
+                  client.models.Devices.update({
+                    device_id: item.device_id,
+                    webhook_status_enabled: e.target.checked,
                   })
                 }
               />
