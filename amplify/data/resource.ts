@@ -1,10 +1,11 @@
-import { type ClientSchema, a, defineData, defineFunction } from "@aws-amplify/backend";
+//import { type ClientSchema, a, defineData, defineFunction } from "@aws-amplify/backend";
+import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { graphqlIoTCoreTelemetry } from '../functions/graphqlIoTCoreTelemetry/resource';
 import { graphqlIoTCoreStatus } from '../functions/graphqlIoTCoreStatus/resource';
 
-const iotCoreHandler = defineFunction({
-  entry: './iot-core-handler/handler.ts'
-})
+//const iotCoreHandler = defineFunction({
+//  entry: './iot-core-handler/handler.ts'
+//})
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -42,20 +43,23 @@ const schema = a.schema({
       allow.publicApiKey(),
     ]),
 
+
+  /*
   AddTelemetry: a
-    .mutation()
-    .arguments({
-      device_id: a.string().required(),
-      //timestamp: a.timestamp().required(), 
-      timestamp: a.string().required(),
-      temperature: a.float(),
-      humidity: a.float(),
-      owner: a.string().required()
-    }
-    )
-    .returns(a.ref("Telemetry"))
-    .authorization((allow) => [allow.publicApiKey()])
-    .handler(a.handler.function(iotCoreHandler)),
+  .mutation()
+  .arguments({
+    device_id: a.string().required(),
+    //timestamp: a.timestamp().required(), 
+    timestamp: a.string().required(),
+    temperature: a.float(),
+    humidity: a.float(),
+    owner: a.string().required()
+  }
+  )
+  .returns(a.ref("Telemetry"))
+  .authorization((allow) => [allow.publicApiKey()])
+  .handler(a.handler.function(iotCoreHandler)),
+  */
 }).authorization((allow) => [
   allow.resource(graphqlIoTCoreTelemetry).to(['query', 'mutate']),
   allow.resource(graphqlIoTCoreStatus).to(['mutate']),
