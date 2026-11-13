@@ -14,34 +14,29 @@ export const handler: Handler = async (event) => {
 
   console.log('Event:', event);
 
-  // Update device status in GraphQL API / Devices table
+  // Get device first so the update can include the stored owner.
+  // Owner auth turns a missing/mismatched owner into ConditionalCheckFailedException.
+  const { data: device, errors: getErrors } = await client.models.Devices.get({
+    device_id: event.clientId,
+  });
+
+  if (getErrors || !device?.owner) {
+    console.log('GetDevice errors:', getErrors);
+    return { statusCode: 400, body: JSON.stringify({ errors: getErrors, device }) };
+  }
+
   const { data, errors } = await client.models.Devices.update({
     device_id: event.clientId,
     status: event.eventType,
+    owner: device.owner,
   });
 
   console.log('Data:', data);
   console.log('Errors:', errors);
 
-
-
-  // If error updating device, return error
   if (errors) {
     console.log('UpdateDevices errors:', errors);
     return { statusCode: 400, body: JSON.stringify({ errors }) };
-  }
-
-  // Send webhook
-  //--------------------------------
-  // Get device from GraphQL API / Devices table
-  const { data: device, errors: getErrors } = await client.models.Devices.get({
-    device_id: event.clientId,
-  });
-
-  // If error getting device, return error
-  if (getErrors || !device?.owner) {
-    console.log('GetDevice errors:', getErrors);
-    return { statusCode: 400, body: JSON.stringify({ errors: getErrors, device }) };
   }
 
   // If webhook is enabled and webhook URL is set
@@ -53,7 +48,7 @@ export const handler: Handler = async (event) => {
         {
           title: 'Device ' + event.eventType,
           description: `at <t:${Math.floor(event.timestamp / 1000)}:F>`,
-          color:  event.eventType == "connected" ? 45973 : 15158332,
+          color: event.eventType == "connected" ? 45973 : 15158332,
         },
       ],
     };

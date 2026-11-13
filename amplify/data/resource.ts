@@ -45,7 +45,7 @@ const schema = a.schema({
 
 }).authorization((allow) => [
   allow.resource(graphqlIoTCoreTelemetry).to(['query', 'mutate']),
-  allow.resource(graphqlIoTCoreStatus).to(['mutate']),
+  allow.resource(graphqlIoTCoreStatus).to(['query', 'mutate']),
   allow.resource(pollSmhi).to(['query', 'mutate']),
 ]);
 
