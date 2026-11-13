@@ -1,0 +1,12 @@
+---
+description: Amplify Gen 2 conventions
+globs: amplify/**/*
+---
+
+- Backend resources are defined in `amplify/` using TypeScript
+- Data models use `a.schema({})` with `a.model()` definitions
+- Authorization uses `.authorization(allow => [...])` chains
+- Auth is configured with `defineAuth()` in `amplify/auth/resource.ts`
+- Storage uses `defineStorage()` in `amplify/storage/resource.ts`
+- Use `@aws-amplify/backend` for backend definitions
+- Use `aws-amplify` for frontend client operations
