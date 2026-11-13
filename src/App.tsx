@@ -15,6 +15,8 @@ import {
   useAuthenticator,
   View,
   SelectField,
+  TextField,
+  SwitchField,
 } from '@aws-amplify/ui-react';
 
 import {
@@ -212,6 +214,26 @@ function App() {
               </Flex>
               <br />
               <Flex>ID: {item.device_id}</Flex>
+              <TextField
+                label="Webhook URL"
+                defaultValue={item.webhook_url ?? ""}
+                onBlur={(e) =>
+                  client.models.Devices.update({
+                    device_id: item.device_id,
+                    webhook_url: e.target.value,
+                  })
+                }
+              />
+              <SwitchField
+                label="Webhook enabled"
+                isChecked={item.webhook_enabled === true}
+                onChange={(e) =>
+                  client.models.Devices.update({
+                    device_id: item.device_id,
+                    webhook_enabled: e.target.checked,
+                  })
+                }
+              />
               <br />
               <Button variation="destructive" isFullWidth onClick={() => deleteDevice(item.device_id)}>
                 Delete

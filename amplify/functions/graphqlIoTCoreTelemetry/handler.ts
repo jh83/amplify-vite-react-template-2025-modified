@@ -17,8 +17,7 @@ export const handler: Handler = async (event) => {
         device_id: event.device_id,
     });
 
-
-    // If device not found, or owner not found, return error
+    // If error getting device, return error
     if (getErrors || !device?.owner) {
         console.log('GetDevice errors:', getErrors);
         return { statusCode: 400, body: JSON.stringify({ errors: getErrors, device }) };
@@ -37,6 +36,32 @@ export const handler: Handler = async (event) => {
     if (createErrors) {
         console.log('CreateTelemetry errors:', createErrors);
         return { statusCode: 400, body: JSON.stringify({ errors: createErrors }) };
+    }
+
+    // If webhook is enabled and webhook URL is set
+    if (device.webhook_enabled === true && device.webhook_url) {
+        const msgBody = {
+            content: event.eventType,
+            embeds: [
+                {
+                    title: 'Temperature: ' + event.temperature + '°C',
+                    description: `at <t:${Math.floor(event.timestamp / 1000)}:F>`,
+                    color: 45973,
+                },
+            ],
+        };
+
+        // Send webhook
+        const response = await fetch(device.webhook_url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(msgBody),
+        });
+
+        // If webhook response is not 204, return error
+        if (response.status !== 204) {
+            console.error('Discord webhook error:', response.status, await response.text());
+        }
     }
 
     // If telemetry created successfully, return telemetry
