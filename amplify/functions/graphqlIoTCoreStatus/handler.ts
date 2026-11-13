@@ -42,12 +42,21 @@ export const handler: Handler = async (event) => {
   // If webhook is enabled and webhook URL is set
   if (device.webhook_status_enabled === true && device.webhook_url) {
     console.log('Sending webhook to:', device.webhook_url);
+
+    if (!data?.createdAt) {
+      console.log('UpdateDevices errors:', errors);
+      return { statusCode: 400, body: JSON.stringify({ errors, data }) };
+    }
+
+    const createdAtSeconds = Math.floor(new Date(data.createdAt).getTime() / 1000);
+
     const msgBody = {
       content: event.eventType,
       embeds: [
         {
           title: 'Device ' + event.eventType,
-          description: `at <t:${Math.floor(event.timestamp / 1000)}:F>`,
+          //description: `at <t:${Math.floor(event.timestamp / 1000)}:F>`,
+          description: `at <t:${createdAtSeconds}:F>`,
           color: event.eventType == "connected" ? 45973 : 15158332,
         },
       ],
