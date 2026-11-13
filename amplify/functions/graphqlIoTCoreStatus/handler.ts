@@ -51,11 +51,10 @@ export const handler: Handler = async (event) => {
     const createdAtSeconds = Math.floor(new Date(data.createdAt).getTime() / 1000);
 
     const msgBody = {
-      content: event.eventType,
+      //content: event.eventType,
       embeds: [
         {
           title: 'Device ' + event.eventType,
-          //description: `at <t:${Math.floor(event.timestamp / 1000)}:F>`,
           description: `at <t:${createdAtSeconds}:F>`,
           color: event.eventType == "connected" ? 45973 : 15158332,
         },

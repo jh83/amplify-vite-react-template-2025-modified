@@ -42,7 +42,7 @@ export const handler: Handler = async (event) => {
     if (device.webhook_telemetry_enabled === true && device.webhook_url) {
         console.log('Sending webhook to:', device.webhook_url);
         const msgBody = {
-            content: event.eventType,
+           // content: event.eventType,
             embeds: [
                 {
                     title: 'Temperature: ' + event.temperature + '°C',
