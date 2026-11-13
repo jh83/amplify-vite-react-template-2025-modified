@@ -2,6 +2,7 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { graphqlIoTCoreTelemetry } from '../functions/graphqlIoTCoreTelemetry/resource';
 import { graphqlIoTCoreStatus } from '../functions/graphqlIoTCoreStatus/resource';
+import { pollSmhi } from '../jobs/pollSmhi/resource';
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -15,6 +16,7 @@ const schema = a.schema({
     .model({
       device_id: a.string().required(),
       owner: a.string().required(),
+      device_type: a.string().required(),
       status: a.string(),
       webhook_url: a.string(),
       webhook_enabled: a.boolean()
@@ -44,6 +46,7 @@ const schema = a.schema({
 }).authorization((allow) => [
   allow.resource(graphqlIoTCoreTelemetry).to(['query', 'mutate']),
   allow.resource(graphqlIoTCoreStatus).to(['mutate']),
+  allow.resource(pollSmhi).to(['query', 'mutate']),
 ]);
 
 
