@@ -51,9 +51,9 @@ export const handler: Handler = async (event) => {
       content: event.eventType,
       embeds: [
         {
-          title: 'Temperature: ' + event.temperature + '°C',
+          title: 'Device ' + event.eventType,
           description: `at <t:${Math.floor(event.timestamp / 1000)}:F>`,
-          color: 45973,
+          color:  event.eventType == "connected" ? 45973 : 15158332,
         },
       ],
     };
