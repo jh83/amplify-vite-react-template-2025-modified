@@ -11,6 +11,7 @@ Amplify.configure(resourceConfig, libraryOptions);
 const client = generateClient<Schema>({ authMode: 'iam' });
 
 export const handler: Handler = async (event) => {
+    console.log('Event:', JSON.stringify(event));
 
     // Get device from GraphQL API / Devices table
     const { data: device, errors: getErrors } = await client.models.Devices.get({
@@ -39,10 +40,15 @@ export const handler: Handler = async (event) => {
     }
 
     // If webhook is enabled and webhook URL is set
+    console.log('Webhook check:', {
+        device_id: event.device_id,
+        webhook_telemetry_enabled: device.webhook_telemetry_enabled,
+        has_url: Boolean(device.webhook_url),
+    });
     if (device.webhook_telemetry_enabled === true && device.webhook_url) {
         console.log('Sending webhook to:', device.webhook_url);
         const msgBody = {
-           // content: event.eventType,
+            // content: event.eventType,
             embeds: [
                 {
                     title: 'Temperature: ' + event.temperature + '°C',
