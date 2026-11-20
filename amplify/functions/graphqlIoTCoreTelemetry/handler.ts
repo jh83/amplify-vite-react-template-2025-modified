@@ -45,7 +45,8 @@ export const handler: Handler = async (event) => {
         webhook_telemetry_enabled: device.webhook_telemetry_enabled,
         has_url: Boolean(device.webhook_url),
     });
-    if (device.webhook_telemetry_enabled === true && device.webhook_url) {
+    
+    if (device.webhook_telemetry_enabled === true && device.webhook_url && typeof event.temperature === 'number') {
         console.log('Sending webhook to:', device.webhook_url);
         const msgBody = {
             // content: event.eventType,
