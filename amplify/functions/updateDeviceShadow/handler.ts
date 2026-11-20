@@ -39,7 +39,7 @@ export const handler: Schema['UpdateDeviceShadow']['functionHandler'] = async (e
 
   await iotData.send(new UpdateThingShadowCommand({
     thingName: device_id,
-    payload: Buffer.from(JSON.stringify({
+    payload: new TextEncoder().encode(JSON.stringify({
       state: { desired: { sendInterval: sendInterval * 1000 } },
     })),
   }));
